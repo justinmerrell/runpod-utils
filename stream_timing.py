@@ -1,3 +1,5 @@
+# Description: This script is used to test the timing of the stream endpoint.
+
 import time
 import json
 import argparse
@@ -6,7 +8,7 @@ import requests
 
 def main(args):
     endpoint_id = args.endpoint
-    base_url = f"https://api.runpod.ai/v2/{endpoint_id}"
+    base_url = "https://" + f'{"dev-" if args.dev else ""}' + f"api.runpod.ai/v2/{endpoint_id}"
 
     headers = {
         "Authorization": f"Bearer {args.api_key}",
@@ -15,8 +17,8 @@ def main(args):
 
     MOCK_PAYLOAD = {
         "input": {
-            "mock_return": [f"Mock return {i} or 50" for i in range(50)],
-            "mock_delay": 0.01
+            "mock_return": [f"Mock return {i} or 50" for i in range(51)],
+            "mock_delay": 0.00001
         }
     }
 
@@ -41,11 +43,12 @@ def main(args):
 
         if response["status"] == "COMPLETED":
             break
-        time.sleep(0.01)
+        time.sleep(0.001)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--dev", action="store_true")
     parser.add_argument("--endpoint", type=str, default="http://localhost:8000")
     parser.add_argument("--api_key", type=str, default="test")
     args = parser.parse_args()
